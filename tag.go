@@ -77,6 +77,10 @@ type Tag struct {
 	readRequestMsg *packets.MessageRouterRequest
 }
 
+func (tag *Tag)SetDriver(driver interface{}){
+	tag.EIP = driver.(*EIPConn)
+}
+
 func (tag *Tag) GetValue() []byte {
 	tag.Lock.Lock()
 	defer tag.Lock.Unlock()
