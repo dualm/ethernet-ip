@@ -739,7 +739,7 @@ func NewTag(eip *EIPConn, name string, count int, onChange func()) *Tag {
 		instanceID: 0,
 		nameLen:    types.UINT(len(name)),
 		name:       []byte(name),
-		Type:       0,
+		Type:       0x00C3,
 		dim1Len:    types.UDINT(count),
 		dim2Len:    0,
 		dim3Len:    0,
