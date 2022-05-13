@@ -54,6 +54,14 @@ func (eip *EIPConn) Connect() error {
 	return nil
 }
 
+func (eip *EIPConn) Close() error {
+	if eip.tcpConn != nil {
+		return eip.tcpConn.Close()
+	}
+
+	return nil
+}
+
 // todo
 func (eip *EIPConn) ForwardOpen() error {
 	// buffer := bufferEip.New(nil)
