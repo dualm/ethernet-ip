@@ -6,9 +6,9 @@ import (
 	"github.com/dualm/ethernet-ip/types"
 )
 
-func New(session types.UDINT, context types.ULINT)(*packets.EncapsulationMessagePackets, error){
+func New(session types.UDINT, context types.ULINT) (*packets.EncapsulationMessagePackets, error) {
 	return &packets.EncapsulationMessagePackets{
-		Header:       packets.EncapsulationHeader{
+		Header: packets.EncapsulationHeader{
 			Command:       command.UnRegisterSession,
 			Length:        0,
 			SessionHandle: session,
@@ -17,5 +17,5 @@ func New(session types.UDINT, context types.ULINT)(*packets.EncapsulationMessage
 			Options:       0,
 		},
 		SpecificData: nil,
-	},nil
+	}, nil
 }

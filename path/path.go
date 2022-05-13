@@ -1,7 +1,7 @@
 package path
 
 import (
-	"github.com/dualm/ethernet-ip/bufferEip"
+	"github.com/dualm/common"
 	"github.com/dualm/ethernet-ip/types"
 	"github.com/dualm/ethernet-ip/utils"
 )
@@ -11,7 +11,7 @@ type SegmentType types.USINT
 const (
 	PortSegment                SegmentType = 0 << 5
 	LogicalSegment             SegmentType = 1 << 5
-	NetworkSegmaent            SegmentType = 2 << 5
+	NetworkSegment             SegmentType = 2 << 5
 	SymbolicSegment            SegmentType = 3 << 5
 	DataSegment                SegmentType = 4 << 5
 	DataTypeConstructedSegment SegmentType = 5 << 5
@@ -42,7 +42,7 @@ const (
 // 1: 16bit
 // 2: 32bit
 func LogicalBuild(logicalType LogicalType, value types.UDINT, format uint8, padded bool) ([]byte, error) {
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	firstByte := uint8(LogicalSegment) | uint8(logicalType) | uint8(format)
 
 	buffer.WriteLittle(firstByte)
@@ -71,7 +71,7 @@ func PortBuild(link []byte, portID uint16) ([]byte, error) {
 	extentLinkAddressSizebit := len(link) > 1
 	extentPortIdentifier := portID > 14
 
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	firstByte := uint8(PortSegment)
 
 	if extentPortIdentifier {
@@ -106,7 +106,7 @@ func PortBuild(link []byte, portID uint16) ([]byte, error) {
 }
 
 func Join(args ...[]byte) []byte {
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 
 	for i := 0; i < len(args); i++ {
 		buffer.WriteLittle(args[i])
@@ -116,11 +116,11 @@ func Join(args ...[]byte) []byte {
 }
 
 func DataBuild(datatype DataSegmentSubType, raw []byte) ([]byte, error) {
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 
 	buffer.WriteLittle(datatype)
-	
-	switch datatype{
+
+	switch datatype {
 	case SimpleDataSegment:
 		buffer.WriteLittle(utils.Len(raw))
 		buffer.WriteLittle(raw)
@@ -129,7 +129,7 @@ func DataBuild(datatype DataSegmentSubType, raw []byte) ([]byte, error) {
 		buffer.WriteLittle(uint8(l))
 		buffer.WriteLittle(raw)
 
-		if l %2 ==1 {
+		if l%2 == 1 {
 			buffer.WriteLittle(uint8(0))
 		}
 	}

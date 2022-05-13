@@ -1,16 +1,20 @@
 package packets
 
 import (
-	"github.com/dualm/ethernet-ip/bufferEip"
+	"github.com/dualm/common"
 	"github.com/dualm/ethernet-ip/types"
 )
 
-func NewConnectedMessage(connectionID types.UDINT, squenceNumber types.UINT, messageRouterRequest *MessageRouterRequest) (*CommandPacketFormat, error) {
-	buffer := bufferEip.New(nil)
+func NewConnectedMessage(connectionID types.UDINT, sequenceNumber types.UINT, messageRouterRequest *MessageRouterRequest) (*CommandPacketFormat, error) {
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle(connectionID)
 
-	buffer1 := bufferEip.New(nil)
-	buffer1.WriteLittle(squenceNumber)
+	if err := buffer.Error(); err != nil {
+		return nil, err
+	}
+
+	buffer1 := common.NewEmptyBuffer()
+	buffer1.WriteLittle(sequenceNumber)
 
 	mr, err := messageRouterRequest.Encode()
 	if err != nil {
@@ -18,6 +22,10 @@ func NewConnectedMessage(connectionID types.UDINT, squenceNumber types.UINT, mes
 	}
 
 	buffer1.WriteLittle(mr)
+
+	if err := buffer1.Error(); err != nil {
+		return nil, err
+	}
 
 	return NewCommandPacketFormat([]CommandPacketFormatItem{
 		{

@@ -6,7 +6,7 @@ import (
 
 const (
 	ServiceGetAttributesAll          types.USINT = 0x01
-	ServiceGetAttributeSignle        types.USINT = 0x0E
+	ServiceGetAttributeSingle        types.USINT = 0x0E
 	ServiceSetAttributeSingle        types.USINT = 0x10
 	ServiceForwardOpen               types.USINT = 0x4E
 	ServiceUnconnectedSend           types.USINT = 0x52

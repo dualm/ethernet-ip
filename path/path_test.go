@@ -1,10 +1,10 @@
-
 package path
 
 import (
-	"github.com/dualm/ethernet-ip/types"
 	"reflect"
 	"testing"
+
+	"github.com/dualm/ethernet-ip/types"
 )
 
 func TestPortBuild(t *testing.T) {

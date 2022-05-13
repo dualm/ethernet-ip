@@ -1,7 +1,7 @@
 package packets
 
 import (
-	"github.com/dualm/ethernet-ip/bufferEip"
+	"github.com/dualm/common"
 	"github.com/dualm/ethernet-ip/types"
 )
 
@@ -16,7 +16,7 @@ const (
 	ItemIDListServicesResponse     ItemID = 0x0100
 	ItemIDSockaddrInfoOToT         ItemID = 0x8000
 	ItemIDSockaddrInfoTToO         ItemID = 0x8001
-	ItemIDSquencedAddressItem      ItemID = 0x8002
+	ItemIDSequencedAddressItem     ItemID = 0x8002
 )
 
 type CommandPacketFormat struct {
@@ -36,7 +36,7 @@ func (cpf *CommandPacketFormat) Encode() ([]byte, error) {
 		cpf.ItemCount = types.UINT(len(cpf.Items))
 	}
 
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle(cpf.ItemCount)
 
 	for _, item := range cpf.Items {
@@ -51,7 +51,7 @@ func (cpf *CommandPacketFormat) Encode() ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
-func (cpf *CommandPacketFormat) Decode(buffer *bufferEip.BufferEip) error {
+func (cpf *CommandPacketFormat) Decode(buffer *common.Buffer) error {
 	buffer.ReadLittle(&cpf.ItemCount)
 	if err := buffer.Error(); err != nil {
 		return err
@@ -82,7 +82,7 @@ func (item *CommandPacketFormatItem) Encode() ([]byte, error) {
 		item.Length = types.UINT(len(item.Data))
 	}
 
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle(item.TypeID)
 	buffer.WriteLittle(item.Length)
 	buffer.WriteLittle(item.Data)
@@ -94,7 +94,7 @@ func (item *CommandPacketFormatItem) Encode() ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
-func (item *CommandPacketFormatItem) Decode(raw *bufferEip.BufferEip) {
+func (item *CommandPacketFormatItem) Decode(raw *common.Buffer) {
 	raw.ReadLittle(&item.TypeID)
 	raw.ReadLittle(&item.Length)
 	item.Data = make([]byte, item.Length)

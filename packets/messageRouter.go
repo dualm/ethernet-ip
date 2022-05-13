@@ -1,7 +1,7 @@
 package packets
 
 import (
-	"github.com/dualm/ethernet-ip/bufferEip"
+	"github.com/dualm/common"
 	"github.com/dualm/ethernet-ip/types"
 	"github.com/dualm/ethernet-ip/utils"
 )
@@ -18,7 +18,7 @@ func (m *MessageRouterRequest) Encode() ([]byte, error) {
 		m.RequestPathSize = utils.Len(m.RequestPath)
 	}
 
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle(m.Service)
 	buffer.WriteLittle(m.RequestPathSize)
 	buffer.WriteLittle(m.RequestPath)
@@ -30,7 +30,7 @@ func (m *MessageRouterRequest) Encode() ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
-func NewMessageRouterRequest(service types.USINT, path []byte, data []byte)(*MessageRouterRequest) {
+func NewMessageRouterRequest(service types.USINT, path []byte, data []byte) *MessageRouterRequest {
 	return &MessageRouterRequest{
 		Service:         service,
 		RequestPathSize: utils.Len(path),
@@ -49,7 +49,8 @@ type MessageRouterResponse struct {
 }
 
 func (m *MessageRouterResponse) Decode(raw []byte) error {
-	buffer := bufferEip.New(raw)
+	buffer := common.NewBuffer(raw)
+
 	buffer.ReadLittle(&m.ReplyService)
 	buffer.ReadLittle(&m.Reserved)
 	buffer.ReadLittle(&m.GeneralStatus)

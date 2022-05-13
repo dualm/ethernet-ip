@@ -1,10 +1,11 @@
 package packets
 
 import (
-	"github.com/dualm/ethernet-ip/bufferEip"
-	"github.com/dualm/ethernet-ip/types"
-	"github.com/dualm/ethernet-ip/packets/command"
 	"errors"
+
+	"github.com/dualm/common"
+	"github.com/dualm/ethernet-ip/packets/command"
+	"github.com/dualm/ethernet-ip/types"
 )
 
 type EncapsulationHeader struct {
@@ -30,7 +31,7 @@ func (p *EncapsulationMessagePackets) Encode() ([]byte, error) {
 		return nil, errors.New("command not supported")
 	}
 
-	buf := bufferEip.New(nil)
+	buf := common.NewEmptyBuffer()
 	buf.WriteLittle(p.Header)
 	buf.WriteLittle(p.SpecificData)
 

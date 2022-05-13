@@ -1,7 +1,7 @@
 package listservices
 
 import (
-	"github.com/dualm/ethernet-ip/bufferEip"
+	"github.com/dualm/common"
 	"github.com/dualm/ethernet-ip/packets"
 	"github.com/dualm/ethernet-ip/packets/command"
 	"github.com/dualm/ethernet-ip/types"
@@ -23,7 +23,7 @@ func New(context types.ULINT) (*packets.EncapsulationMessagePackets, error) {
 
 type ListServicesItems struct {
 	ItemCount int
-	Items  []CIPIdentityItem
+	Items     []CIPIdentityItem
 }
 
 type CIPIdentityItem struct {
@@ -36,10 +36,10 @@ type CIPIdentityItem struct {
 
 func Decode(packet *packets.EncapsulationMessagePackets) (*ListServicesItems, error) {
 	result := new(ListServicesItems)
-	buffer := bufferEip.New(packet.SpecificData)
+	buffer := common.NewBuffer(packet.SpecificData)
 	buffer.ReadLittle(&result.ItemCount)
 
-	for i := types.UINT(0);i<types.UINT(result.ItemCount);i++{
+	for i := types.UINT(0); i < types.UINT(result.ItemCount); i++ {
 		item := CIPIdentityItem{}
 
 		buffer.ReadLittle(&item.ItemTypeCode)

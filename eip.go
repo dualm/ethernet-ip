@@ -6,9 +6,8 @@ import (
 	"net"
 	"sync"
 
-	"github.com/dualm/ethernet-ip/bufferEip"
+	"github.com/dualm/common"
 	"github.com/dualm/ethernet-ip/packets"
-	"github.com/dualm/ethernet-ip/utils"
 	"github.com/dualm/ethernet-ip/packets/listidentity"
 	"github.com/dualm/ethernet-ip/packets/listinterfaces"
 	"github.com/dualm/ethernet-ip/packets/listservices"
@@ -17,9 +16,10 @@ import (
 	"github.com/dualm/ethernet-ip/packets/sendunitdata"
 	"github.com/dualm/ethernet-ip/packets/unregistersession"
 	"github.com/dualm/ethernet-ip/types"
+	"github.com/dualm/ethernet-ip/utils"
 )
 
-type EIPConn struct { 
+type EIPConn struct {
 	config  *Config
 	tcpAddr *net.TCPAddr
 	tcpConn *net.TCPConn
@@ -28,7 +28,7 @@ type EIPConn struct {
 	session types.UDINT
 
 	established  bool
-	connecitonID types.UDINT
+	connectionID types.UDINT
 	seqNum       types.UINT
 
 	requestLock *sync.Mutex
@@ -90,7 +90,8 @@ func (eip *EIPConn) parse(buf []byte) (*packets.EncapsulationMessagePackets, err
 	}
 
 	_packet := new(packets.EncapsulationMessagePackets)
-	buffer := bufferEip.New(buf)
+
+	buffer := common.NewBuffer(buf)
 	buffer.ReadLittle(&_packet.Header)
 	if err := buffer.Error(); err != nil {
 		return nil, err
@@ -190,7 +191,7 @@ func NewEIP(address string, config *Config) (*EIPConn, error) {
 		udpAddr:      udpAddress,
 		session:      0,
 		established:  false,
-		connecitonID: 0,
+		connectionID: 0,
 		seqNum:       0,
 		requestLock:  new(sync.Mutex),
 	}, nil
@@ -212,7 +213,7 @@ func (eip *EIPConn) ListInterface() (*listinterfaces.ListInterfaceItems, error) 
 	return listinterfaces.Decode(response)
 }
 
-func (eip *EIPConn) ListSerivces() (*listservices.ListServicesItems, error) {
+func (eip *EIPConn) ListServices() (*listservices.ListServicesItems, error) {
 	ctx := utils.GetNewContext()
 
 	request, err := listservices.New(ctx)
@@ -276,7 +277,7 @@ func (eip *EIPConn) SendUnitData(cpf *packets.CommandPacketFormat) (*packets.Spe
 	return sendunitdata.Decode(response)
 }
 
-func (eip *EIPConn)Send(messageRouterRequest *packets.MessageRouterRequest)(*packets.SpecificData, error){
+func (eip *EIPConn) Send(messageRouterRequest *packets.MessageRouterRequest) (*packets.SpecificData, error) {
 	if !eip.established {
 		mr, err := packets.UnConnectedMessageRouterRequest(
 			eip.config.Slot,
@@ -294,13 +295,13 @@ func (eip *EIPConn)Send(messageRouterRequest *packets.MessageRouterRequest)(*pac
 	if eip.established {
 		eip.seqNum += 1
 
-		message, err := packets.NewConnectedMessage(eip.connecitonID, eip.seqNum, messageRouterRequest)
+		message, err := packets.NewConnectedMessage(eip.connectionID, eip.seqNum, messageRouterRequest)
 		if err != nil {
 			return nil, err
 		}
 
 		return eip.SendUnitData(message)
-	}else{
+	} else {
 		message, err := packets.NewUnconnectedMessage(messageRouterRequest)
 		if err != nil {
 			return nil, err

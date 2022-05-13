@@ -2,14 +2,15 @@ package eip
 
 import (
 	"bytes"
-	"github.com/dualm/ethernet-ip/bufferEip"
-	"github.com/dualm/ethernet-ip/packets"
-	"github.com/dualm/ethernet-ip/path"
-	"github.com/dualm/ethernet-ip/types"
 	"errors"
 	"fmt"
 	"sync"
 	"unicode"
+
+	"github.com/dualm/common"
+	"github.com/dualm/ethernet-ip/packets"
+	"github.com/dualm/ethernet-ip/path"
+	"github.com/dualm/ethernet-ip/types"
 )
 
 const (
@@ -72,12 +73,12 @@ type Tag struct {
 
 	value    []byte
 	mValue   []byte
-	Onchange func()
+	OnChange func()
 
 	readRequestMsg *packets.MessageRouterRequest
 }
 
-func (tag *Tag)SetDriver(driver interface{}){
+func (tag *Tag) SetDriver(driver interface{}) {
 	tag.EIP = driver.(*EIPConn)
 }
 
@@ -107,15 +108,20 @@ func (tag *Tag) Read() error {
 	}
 
 	mrres := new(packets.MessageRouterResponse)
-	mrres.Decode(res.Packet.Items[1].Data)
 
-	tag.readParser(mrres, nil)
+	if err := mrres.Decode(res.Packet.Items[1].Data); err != nil {
+		return fmt.Errorf("decode error, Error: %w", err)
+	}
+
+	if err := tag.readParser(mrres, nil); err != nil {
+		return fmt.Errorf("readParser error, Error: %w", err)
+	}
 
 	return nil
 }
 
 func (tag *Tag) readRequest() (*packets.MessageRouterRequest, error) {
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 
 	buffer.WriteLittle(tag.count())
 	if err := buffer.Error(); err != nil {
@@ -150,13 +156,13 @@ func (tag *Tag) readRequest() (*packets.MessageRouterRequest, error) {
 }
 
 func (tag *Tag) readParser(response *packets.MessageRouterResponse, cb func(func())) error {
-	buffer := bufferEip.New(response.ResponseData)
+	buffer := common.NewBuffer(response.ResponseData)
 
 	_t := uint16(0)
 	buffer.ReadLittle(&_t)
 
 	// 0x2a0
-	// Tag Type Sevice Parameter for structures
+	// Tag Type Service Parameter for structures
 	if _t == 0x02a0 {
 		buffer.ReadLittle(&_t)
 	}
@@ -168,13 +174,13 @@ func (tag *Tag) readParser(response *packets.MessageRouterResponse, cb func(func
 		return err
 	}
 
-	if bytes.Compare(tag.value, payload) != 0 {
+	if !bytes.Equal(tag.value, payload) {
 		tag.value = payload
-		if tag.Onchange != nil {
+		if tag.OnChange != nil {
 			if cb == nil {
-				go tag.Onchange()
+				go tag.OnChange()
 			} else {
-				go cb(tag.Onchange)
+				go cb(tag.OnChange)
 			}
 		}
 	}
@@ -219,7 +225,7 @@ func (tag *Tag) writeRequest() ([]*packets.MessageRouterRequest, error) {
 
 	// atomic
 	if 0x8000&tag.Type == 0 {
-		buffer := bufferEip.New(nil)
+		buffer := common.NewEmptyBuffer()
 
 		buffer.WriteLittle(tag.Type)
 		buffer.WriteLittle(tag.count())
@@ -251,7 +257,7 @@ func (tag *Tag) writeRequest() ([]*packets.MessageRouterRequest, error) {
 
 		result = append(result, messageRouterRequest)
 	} else {
-		buffer := bufferEip.New(nil)
+		buffer := common.NewEmptyBuffer()
 
 		buffer.WriteLittle(DINT)
 		buffer.WriteLittle(types.UINT(1))
@@ -280,7 +286,7 @@ func (tag *Tag) writeRequest() ([]*packets.MessageRouterRequest, error) {
 
 		result = append(result, messageRouterRequest1)
 
-		buffer1 := bufferEip.New(nil)
+		buffer1 := common.NewEmptyBuffer()
 
 		buffer1.WriteLittle(SINT)
 		buffer1.WriteLittle(types.UINT(len(tag.mValue)))
@@ -303,12 +309,12 @@ func (tag *Tag) writeRequest() ([]*packets.MessageRouterRequest, error) {
 	return result, nil
 }
 
-func (tag *Tag)SetValue(data []byte){
+func (tag *Tag) SetValue(data []byte) {
 	// tag.Lock.Lock()
 	// defer tag.Lock.Unlock()
 	tag.changed = true
 
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle(data)
 
 	tag.mValue = buffer.Bytes()
@@ -316,19 +322,21 @@ func (tag *Tag)SetValue(data []byte){
 
 func (tag *Tag) SetInt32(i int32) {
 	tag.changed = true
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle(i)
 	tag.mValue = buffer.Bytes()
 }
 
 func (tag *Tag) SetString(i string) {
 	tag.changed = true
-	buffer := bufferEip.New(nil)
+
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle([]byte(i))
+
 	tag.mValue = buffer.Bytes()
 }
 
-func (tag *Tag)SetType(word types.UINT){
+func (tag *Tag) SetType(word types.UINT) {
 	tag.Type = word
 }
 
@@ -372,11 +380,11 @@ func (tag *Tag) count() types.UINT {
 }
 
 func (tag *Tag) Int32() (int32, error) {
-	buffer := bufferEip.New(tag.value)
+	buffer := common.NewBuffer(tag.value)
 
 	var val int32
 
-	buffer.WriteLittle(&val)
+	buffer.ReadLittle(&val)
 	if err := buffer.Error(); err != nil {
 		return 0, err
 	}
@@ -385,7 +393,7 @@ func (tag *Tag) Int32() (int32, error) {
 }
 
 func (tag *Tag) String() (string, error) {
-	buffer := bufferEip.New(tag.value)
+	buffer := common.NewBuffer(tag.value)
 
 	l := types.UDINT(0)
 
@@ -413,7 +421,7 @@ func (tag *Tag) XInt32() (int32, error) {
 		val = tag.value
 	}
 
-	buffer := bufferEip.New(val)
+	buffer := common.NewBuffer(val)
 	var v int32
 	buffer.ReadLittle(&v)
 
@@ -431,7 +439,7 @@ func (tag *Tag) XString() (string, error) {
 		value = tag.value
 	}
 
-	buffer := bufferEip.New(value)
+	buffer := common.NewBuffer(value)
 	l := types.UDINT(0)
 	buffer.ReadLittle(&l)
 	if l > 88 {
@@ -459,8 +467,9 @@ func multiple(messageRouterRequests []*packets.MessageRouterRequest) (*packets.M
 		return messageRouterRequests[0], nil
 	}
 
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle(types.UINT(l))
+
 	offset := 2 * (l + 1)
 	buffer.WriteLittle(types.UINT(offset))
 	for i := range messageRouterRequests {
@@ -528,7 +537,7 @@ func (eip *EIPConn) allTags(tagMap map[string]*Tag, instanceID types.UDINT) (map
 		instancePath,
 	)
 
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle(types.UINT(3))
 	buffer.WriteLittle(types.UINT(1))
 	buffer.WriteLittle(types.UINT(2))
@@ -546,9 +555,11 @@ func (eip *EIPConn) allTags(tagMap map[string]*Tag, instanceID types.UDINT) (map
 	}
 
 	mrres := new(packets.MessageRouterResponse)
-	mrres.Decode(res.Packet.Items[1].Data)
+	if err := mrres.Decode(res.Packet.Items[1].Data); err != nil {
+		return nil, fmt.Errorf("decode error, Error: %w", err)
+	}
 
-	buffer1 := bufferEip.New(mrres.ResponseData)
+	buffer1 := common.NewBuffer(mrres.ResponseData)
 	for buffer1.Len() > 0 {
 		tag := new(Tag)
 		tag.EIP = eip
@@ -646,9 +657,11 @@ func (tg *TagGroup) Read() error {
 	}
 
 	rmr := new(packets.MessageRouterResponse)
-	rmr.Decode(res.Packet.Items[1].Data)
+	if err := rmr.Decode(res.Packet.Items[1].Data); err != nil {
+		return fmt.Errorf("decode error, Error: %w", err)
+	}
 
-	buffer1 := bufferEip.New(rmr.ResponseData)
+	buffer1 := common.NewBuffer(rmr.ResponseData)
 	count := types.UINT(0)
 	buffer1.ReadLittle(&count)
 
@@ -668,14 +681,20 @@ func (tg *TagGroup) Read() error {
 		mr := new(packets.MessageRouterResponse)
 
 		if (i2 + 1) != len(offset) {
-			mr.Decode(rmr.ResponseData[offset[i2]:offset[i2+1]])
+			if err := mr.Decode(rmr.ResponseData[offset[i2]:offset[i2+1]]); err != nil {
+				return err
+			}
 		} else {
-			mr.Decode(rmr.ResponseData[offset[i2]:])
+			if err := mr.Decode(rmr.ResponseData[offset[i2]:]); err != nil {
+				return err
+			}
 		}
 
-		tg.tags[list[i2]].readParser(mr, func(f func()) {
+		if err := tg.tags[list[i2]].readParser(mr, func(f func()) {
 			cbs = append(cbs, f)
-		})
+		}); err != nil {
+			return err
+		}
 	}
 
 	for i := range cbs {
@@ -746,6 +765,6 @@ func NewTag(eip *EIPConn, name string, count int, onChange func()) *Tag {
 		changed:    false,
 		value:      []byte{},
 		mValue:     []byte{},
-		Onchange:   onChange,
+		OnChange:   onChange,
 	}
 }

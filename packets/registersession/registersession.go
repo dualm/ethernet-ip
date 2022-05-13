@@ -1,7 +1,7 @@
 package registersession
 
 import (
-	"github.com/dualm/ethernet-ip/bufferEip"
+	"github.com/dualm/common"
 	"github.com/dualm/ethernet-ip/packets"
 	"github.com/dualm/ethernet-ip/packets/command"
 	"github.com/dualm/ethernet-ip/types"
@@ -37,7 +37,7 @@ type RegisterSessionSpecificData struct {
 }
 
 func (data *RegisterSessionSpecificData) Encode() ([]byte, error) {
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle(data.ProtocolVersion)
 	buffer.WriteLittle(data.OptionsFlags)
 	if err := buffer.Error(); err != nil {
@@ -46,4 +46,3 @@ func (data *RegisterSessionSpecificData) Encode() ([]byte, error) {
 
 	return buffer.Bytes(), nil
 }
-

@@ -1,7 +1,7 @@
 package listidentity
 
 import (
-	"github.com/dualm/ethernet-ip/bufferEip"
+	"github.com/dualm/common"
 	"github.com/dualm/ethernet-ip/packets"
 	"github.com/dualm/ethernet-ip/packets/command"
 	"github.com/dualm/ethernet-ip/types"
@@ -48,7 +48,7 @@ type CIPIdentityItem struct {
 
 func Decode(packet *packets.EncapsulationMessagePackets) (*ListIdentityItems, error) {
 	result := new(ListIdentityItems)
-	io := bufferEip.New(packet.SpecificData)
+	io := common.NewBuffer(packet.SpecificData)
 	io.ReadLittle(&result.ItemCount)
 
 	for i := types.UINT(0); i < types.UINT(result.ItemCount); i++ {

@@ -1,7 +1,7 @@
 package packets
 
 import (
-	"github.com/dualm/ethernet-ip/bufferEip"
+	"github.com/dualm/common"
 	"github.com/dualm/ethernet-ip/path"
 	"github.com/dualm/ethernet-ip/types"
 	"github.com/dualm/ethernet-ip/utils"
@@ -24,10 +24,12 @@ func (u *UnConnectedSendServiceParameters) Encode() ([]byte, error) {
 		return nil, err
 	}
 
-	buffer := bufferEip.New(nil)
+	buffer := common.NewEmptyBuffer()
 	buffer.WriteLittle(u.PriorityTimeTick)
 	buffer.WriteLittle(u.TimeoutTicks)
+
 	l := len(messageRouterRequest)
+
 	buffer.WriteLittle(types.UINT(l))
 	buffer.WriteLittle(messageRouterRequest)
 
@@ -74,9 +76,7 @@ func UnConnectedMessageRouterRequest(slot uint8, timeTick types.USINT, timeoutTi
 		return nil, err
 	}
 
-	return NewMessageRouterRequest(ServiceUnconnectedSend,
-		path.Join(classID, instanceID),
-		data), nil
+	return NewMessageRouterRequest(ServiceUnconnectedSend, path.Join(classID, instanceID), data), nil
 }
 
 func NewUnconnectedMessage(messageRR *MessageRouterRequest) (*CommandPacketFormat, error) {
@@ -85,16 +85,18 @@ func NewUnconnectedMessage(messageRR *MessageRouterRequest) (*CommandPacketForma
 		return nil, err
 	}
 
-	cpf := NewCommandPacketFormat([]CommandPacketFormatItem{
-		{
-			TypeID: ItemIDUCMM,
-			Data:   nil,
+	cpf := NewCommandPacketFormat(
+		[]CommandPacketFormatItem{
+			{
+				TypeID: ItemIDUCMM,
+				Data:   nil,
+			},
+			{
+				TypeID: ItemIDUnconnectedMessage,
+				Data:   mr,
+			},
 		},
-		{
-			TypeID: ItemIDUnconnectedMessage,
-			Data:   mr,
-		},
-	})
+	)
 
 	return cpf, nil
 }

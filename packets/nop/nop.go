@@ -6,9 +6,9 @@ import (
 	"github.com/dualm/ethernet-ip/types"
 )
 
-func New(data []byte)(*packets.EncapsulationMessagePackets, error) {
+func New(data []byte) (*packets.EncapsulationMessagePackets, error) {
 	return &packets.EncapsulationMessagePackets{
-		Header:       packets.EncapsulationHeader{
+		Header: packets.EncapsulationHeader{
 			Command:       command.NOP,
 			Length:        types.UINT(len(data)),
 			SessionHandle: 0,

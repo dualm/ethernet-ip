@@ -6,7 +6,7 @@ import (
 	"github.com/dualm/ethernet-ip/types"
 )
 
-func New(session types.UDINT, conetxt types.ULINT, cpf *packets.CommandPacketFormat) (*packets.EncapsulationMessagePackets, error) {
+func New(session types.UDINT, context types.ULINT, cpf *packets.CommandPacketFormat) (*packets.EncapsulationMessagePackets, error) {
 	specificData := packets.SpecificData{
 		InterfaceHandle: 0,
 		Timeout:         0,
@@ -24,7 +24,7 @@ func New(session types.UDINT, conetxt types.ULINT, cpf *packets.CommandPacketFor
 			Length:        types.UINT(len(specificDataBytes)),
 			SessionHandle: session,
 			Status:        0,
-			SenderContext: conetxt,
+			SenderContext: context,
 			Options:       0,
 		},
 		SpecificData: specificDataBytes,

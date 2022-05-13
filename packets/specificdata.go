@@ -1,7 +1,9 @@
 package packets
 
 import (
-	"github.com/dualm/ethernet-ip/bufferEip"
+	"fmt"
+
+	"github.com/dualm/common"
 	"github.com/dualm/ethernet-ip/types"
 )
 
@@ -11,8 +13,8 @@ type SpecificData struct {
 	Packet          *CommandPacketFormat
 }
 
-func (data SpecificData)Encode() ([]byte, error) {
-	buffer := bufferEip.New(nil)
+func (data SpecificData) Encode() ([]byte, error) {
+	buffer := common.NewEmptyBuffer()
 
 	buffer.WriteLittle(data.InterfaceHandle)
 	buffer.WriteLittle(data.Timeout)
@@ -27,18 +29,20 @@ func (data SpecificData)Encode() ([]byte, error) {
 	}
 
 	return buffer.Bytes(), nil
-	
 }
 
-func (data *SpecificData)Decode(raw []byte) error {
-	buffer := bufferEip.New(raw)
+func (data *SpecificData) Decode(raw []byte) error {
+	buffer := common.NewBuffer(raw)
 	buffer.ReadLittle(&data.InterfaceHandle)
 	buffer.ReadLittle(&data.Timeout)
 	data.Packet = new(CommandPacketFormat)
-	data.Packet.Decode(buffer)
+
+	if err := data.Packet.Decode(buffer); err != nil {
+		return fmt.Errorf("decode error, Error: %w", err)
+	}
 
 	if err := buffer.Error(); err != nil {
-		return err 
+		return err
 	}
 
 	return nil
