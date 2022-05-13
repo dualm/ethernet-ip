@@ -32,6 +32,8 @@ func (p *EncapsulationMessagePackets) Encode() ([]byte, error) {
 	}
 
 	buf := common.NewEmptyBuffer()
+	defer buf.Put()
+
 	buf.WriteLittle(p.Header)
 	buf.WriteLittle(p.SpecificData)
 

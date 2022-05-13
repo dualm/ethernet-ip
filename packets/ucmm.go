@@ -25,6 +25,8 @@ func (u *UnConnectedSendServiceParameters) Encode() ([]byte, error) {
 	}
 
 	buffer := common.NewEmptyBuffer()
+	defer buffer.Put()
+
 	buffer.WriteLittle(u.PriorityTimeTick)
 	buffer.WriteLittle(u.TimeoutTicks)
 

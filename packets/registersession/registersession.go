@@ -38,6 +38,8 @@ type RegisterSessionSpecificData struct {
 
 func (data *RegisterSessionSpecificData) Encode() ([]byte, error) {
 	buffer := common.NewEmptyBuffer()
+	defer buffer.Put()
+
 	buffer.WriteLittle(data.ProtocolVersion)
 	buffer.WriteLittle(data.OptionsFlags)
 	if err := buffer.Error(); err != nil {

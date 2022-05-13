@@ -100,6 +100,8 @@ func (eip *EIPConn) parse(buf []byte) (*packets.EncapsulationMessagePackets, err
 	_packet := new(packets.EncapsulationMessagePackets)
 
 	buffer := common.NewBuffer(buf)
+	defer buffer.Put()
+
 	buffer.ReadLittle(&_packet.Header)
 	if err := buffer.Error(); err != nil {
 		return nil, err

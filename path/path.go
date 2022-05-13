@@ -43,6 +43,8 @@ const (
 // 2: 32bit
 func LogicalBuild(logicalType LogicalType, value types.UDINT, format uint8, padded bool) ([]byte, error) {
 	buffer := common.NewEmptyBuffer()
+	defer buffer.Put()
+
 	firstByte := uint8(LogicalSegment) | uint8(logicalType) | uint8(format)
 
 	buffer.WriteLittle(firstByte)
@@ -72,6 +74,8 @@ func PortBuild(link []byte, portID uint16) ([]byte, error) {
 	extentPortIdentifier := portID > 14
 
 	buffer := common.NewEmptyBuffer()
+	defer buffer.Put()
+
 	firstByte := uint8(PortSegment)
 
 	if extentPortIdentifier {
@@ -107,6 +111,7 @@ func PortBuild(link []byte, portID uint16) ([]byte, error) {
 
 func Join(args ...[]byte) []byte {
 	buffer := common.NewEmptyBuffer()
+	defer buffer.Put()
 
 	for i := 0; i < len(args); i++ {
 		buffer.WriteLittle(args[i])
@@ -117,6 +122,7 @@ func Join(args ...[]byte) []byte {
 
 func DataBuild(datatype DataSegmentSubType, raw []byte) ([]byte, error) {
 	buffer := common.NewEmptyBuffer()
+	defer buffer.Put()
 
 	buffer.WriteLittle(datatype)
 

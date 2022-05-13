@@ -37,6 +37,8 @@ func (cpf *CommandPacketFormat) Encode() ([]byte, error) {
 	}
 
 	buffer := common.NewEmptyBuffer()
+	defer buffer.Put()
+
 	buffer.WriteLittle(cpf.ItemCount)
 
 	for _, item := range cpf.Items {
@@ -83,6 +85,8 @@ func (item *CommandPacketFormatItem) Encode() ([]byte, error) {
 	}
 
 	buffer := common.NewEmptyBuffer()
+	defer buffer.Put()
+
 	buffer.WriteLittle(item.TypeID)
 	buffer.WriteLittle(item.Length)
 	buffer.WriteLittle(item.Data)
