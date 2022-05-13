@@ -15,7 +15,6 @@ type SpecificData struct {
 
 func (data SpecificData) Encode() ([]byte, error) {
 	buffer := common.NewEmptyBuffer()
-	defer buffer.Put()
 
 	buffer.WriteLittle(data.InterfaceHandle)
 	buffer.WriteLittle(data.Timeout)
@@ -34,7 +33,6 @@ func (data SpecificData) Encode() ([]byte, error) {
 
 func (data *SpecificData) Decode(raw []byte) error {
 	buffer := common.NewBuffer(raw)
-	defer buffer.Put()
 
 	buffer.ReadLittle(&data.InterfaceHandle)
 	buffer.ReadLittle(&data.Timeout)

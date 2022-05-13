@@ -7,7 +7,6 @@ import (
 
 func NewConnectedMessage(connectionID types.UDINT, sequenceNumber types.UINT, messageRouterRequest *MessageRouterRequest) (*CommandPacketFormat, error) {
 	buffer := common.NewEmptyBuffer()
-	defer buffer.Put()
 
 	buffer.WriteLittle(connectionID)
 
@@ -16,7 +15,6 @@ func NewConnectedMessage(connectionID types.UDINT, sequenceNumber types.UINT, me
 	}
 
 	buffer1 := common.NewEmptyBuffer()
-	defer buffer.Put()
 
 	buffer1.WriteLittle(sequenceNumber)
 

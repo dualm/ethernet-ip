@@ -19,7 +19,6 @@ func (m *MessageRouterRequest) Encode() ([]byte, error) {
 	}
 
 	buffer := common.NewEmptyBuffer()
-	defer buffer.Put()
 
 	buffer.WriteLittle(m.Service)
 	buffer.WriteLittle(m.RequestPathSize)
@@ -52,7 +51,6 @@ type MessageRouterResponse struct {
 
 func (m *MessageRouterResponse) Decode(raw []byte) error {
 	buffer := common.NewBuffer(raw)
-	defer buffer.Put()
 
 	buffer.ReadLittle(&m.ReplyService)
 	buffer.ReadLittle(&m.Reserved)

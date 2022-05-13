@@ -35,7 +35,6 @@ type CIPIdentityItem struct {
 func Decode(packet *packets.EncapsulationMessagePackets) (*ListInterfaceItems, error) {
 	result := new(ListInterfaceItems)
 	buffer := common.NewBuffer(packet.SpecificData)
-	defer buffer.Put()
 
 	buffer.ReadLittle(&result.ItemCount)
 

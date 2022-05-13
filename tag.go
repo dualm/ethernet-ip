@@ -122,7 +122,6 @@ func (tag *Tag) Read() error {
 
 func (tag *Tag) readRequest() (*packets.MessageRouterRequest, error) {
 	buffer := common.NewEmptyBuffer()
-	defer buffer.Put()
 
 	buffer.WriteLittle(tag.count())
 	if err := buffer.Error(); err != nil {
@@ -158,7 +157,6 @@ func (tag *Tag) readRequest() (*packets.MessageRouterRequest, error) {
 
 func (tag *Tag) readParser(response *packets.MessageRouterResponse, cb func(func())) error {
 	buffer := common.NewBuffer(response.ResponseData)
-	defer buffer.Put()
 
 	_t := uint16(0)
 	buffer.ReadLittle(&_t)
@@ -228,7 +226,6 @@ func (tag *Tag) writeRequest() ([]*packets.MessageRouterRequest, error) {
 	// atomic
 	if 0x8000&tag.Type == 0 {
 		buffer := common.NewEmptyBuffer()
-		defer buffer.Put()
 
 		buffer.WriteLittle(tag.Type)
 		buffer.WriteLittle(tag.count())
@@ -261,7 +258,6 @@ func (tag *Tag) writeRequest() ([]*packets.MessageRouterRequest, error) {
 		result = append(result, messageRouterRequest)
 	} else {
 		buffer := common.NewEmptyBuffer()
-		defer buffer.Put()
 
 		buffer.WriteLittle(DINT)
 		buffer.WriteLittle(types.UINT(1))
@@ -291,7 +287,6 @@ func (tag *Tag) writeRequest() ([]*packets.MessageRouterRequest, error) {
 		result = append(result, messageRouterRequest1)
 
 		buffer1 := common.NewEmptyBuffer()
-		defer buffer1.Put()
 
 		buffer1.WriteLittle(SINT)
 		buffer1.WriteLittle(types.UINT(len(tag.mValue)))
@@ -320,7 +315,6 @@ func (tag *Tag) SetValue(data []byte) {
 	tag.changed = true
 
 	buffer := common.NewEmptyBuffer()
-	defer buffer.Put()
 
 	buffer.WriteLittle(data)
 
@@ -331,7 +325,6 @@ func (tag *Tag) SetInt32(i int32) {
 	tag.changed = true
 
 	buffer := common.NewEmptyBuffer()
-	defer buffer.Put()
 
 	buffer.WriteLittle(i)
 	tag.mValue = buffer.Bytes()
@@ -341,7 +334,6 @@ func (tag *Tag) SetString(i string) {
 	tag.changed = true
 
 	buffer := common.NewEmptyBuffer()
-	defer buffer.Put()
 
 	buffer.WriteLittle([]byte(i))
 
@@ -393,7 +385,6 @@ func (tag *Tag) count() types.UINT {
 
 func (tag *Tag) Int32() (int32, error) {
 	buffer := common.NewBuffer(tag.value)
-	defer buffer.Put()
 
 	var val int32
 
@@ -407,7 +398,6 @@ func (tag *Tag) Int32() (int32, error) {
 
 func (tag *Tag) String() (string, error) {
 	buffer := common.NewBuffer(tag.value)
-	defer buffer.Put()
 
 	l := types.UDINT(0)
 
@@ -436,7 +426,6 @@ func (tag *Tag) XInt32() (int32, error) {
 	}
 
 	buffer := common.NewBuffer(val)
-	defer buffer.Put()
 
 	var v int32
 	buffer.ReadLittle(&v)
@@ -456,7 +445,6 @@ func (tag *Tag) XString() (string, error) {
 	}
 
 	buffer := common.NewBuffer(value)
-	defer buffer.Put()
 
 	l := types.UDINT(0)
 	buffer.ReadLittle(&l)
@@ -486,7 +474,6 @@ func multiple(messageRouterRequests []*packets.MessageRouterRequest) (*packets.M
 	}
 
 	buffer := common.NewEmptyBuffer()
-	defer buffer.Put()
 
 	buffer.WriteLittle(types.UINT(l))
 
@@ -558,7 +545,6 @@ func (eip *EIPConn) allTags(tagMap map[string]*Tag, instanceID types.UDINT) (map
 	)
 
 	buffer := common.NewEmptyBuffer()
-	defer buffer.Put()
 
 	buffer.WriteLittle(types.UINT(3))
 	buffer.WriteLittle(types.UINT(1))
@@ -582,7 +568,6 @@ func (eip *EIPConn) allTags(tagMap map[string]*Tag, instanceID types.UDINT) (map
 	}
 
 	buffer1 := common.NewBuffer(mrres.ResponseData)
-	defer buffer1.Put()
 
 	for buffer1.Len() > 0 {
 		tag := new(Tag)
@@ -686,7 +671,6 @@ func (tg *TagGroup) Read() error {
 	}
 
 	buffer1 := common.NewBuffer(rmr.ResponseData)
-	defer buffer1.Put()
 
 	count := types.UINT(0)
 	buffer1.ReadLittle(&count)
