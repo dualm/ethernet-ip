@@ -1,8 +1,8 @@
 package packets
 
 import (
-	"github.com/dualm/common"
-	"github.com/dualm/ethernet-ip/types"
+	"gitee.com/ziIoT/common"
+	"gitee.com/ziIoT/ethernet-ip/types"
 )
 
 type ItemID types.UINT

@@ -1,7 +1,7 @@
 package packets
 
 import (
-	"github.com/dualm/ethernet-ip/types"
+	"gitee.com/ziIoT/ethernet-ip/types"
 )
 
 const (

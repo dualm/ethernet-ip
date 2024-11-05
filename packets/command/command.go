@@ -1,7 +1,7 @@
 package command
 
 import (
-	"github.com/dualm/ethernet-ip/types"
+	"gitee.com/ziIoT/ethernet-ip/types"
 )
 
 type Command types.UINT

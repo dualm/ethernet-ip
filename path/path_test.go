@@ -4,7 +4,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/dualm/ethernet-ip/types"
+	"gitee.com/ziIoT/ethernet-ip/types"
 )
 
 func TestPortBuild(t *testing.T) {

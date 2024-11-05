@@ -1,10 +1,10 @@
 package packets
 
 import (
-	"github.com/dualm/common"
-	"github.com/dualm/ethernet-ip/path"
-	"github.com/dualm/ethernet-ip/types"
-	"github.com/dualm/ethernet-ip/utils"
+	"gitee.com/ziIoT/common"
+	"gitee.com/ziIoT/ethernet-ip/path"
+	"gitee.com/ziIoT/ethernet-ip/types"
+	"gitee.com/ziIoT/ethernet-ip/utils"
 )
 
 type UnConnectedSendServiceParameters struct {

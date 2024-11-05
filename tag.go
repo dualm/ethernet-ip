@@ -7,10 +7,10 @@ import (
 	"sync"
 	"unicode"
 
-	"github.com/dualm/common"
-	"github.com/dualm/ethernet-ip/packets"
-	"github.com/dualm/ethernet-ip/path"
-	"github.com/dualm/ethernet-ip/types"
+	"gitee.com/ziIoT/common"
+	"gitee.com/ziIoT/ethernet-ip/packets"
+	"gitee.com/ziIoT/ethernet-ip/path"
+	"gitee.com/ziIoT/ethernet-ip/types"
 )
 
 const (

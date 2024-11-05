@@ -6,17 +6,17 @@ import (
 	"net"
 	"sync"
 
-	"github.com/dualm/common"
-	"github.com/dualm/ethernet-ip/packets"
-	"github.com/dualm/ethernet-ip/packets/listidentity"
-	"github.com/dualm/ethernet-ip/packets/listinterfaces"
-	"github.com/dualm/ethernet-ip/packets/listservices"
-	"github.com/dualm/ethernet-ip/packets/registersession"
-	"github.com/dualm/ethernet-ip/packets/sendrrdata"
-	"github.com/dualm/ethernet-ip/packets/sendunitdata"
-	"github.com/dualm/ethernet-ip/packets/unregistersession"
-	"github.com/dualm/ethernet-ip/types"
-	"github.com/dualm/ethernet-ip/utils"
+	"gitee.com/ziIoT/common"
+	"gitee.com/ziIoT/ethernet-ip/packets"
+	"gitee.com/ziIoT/ethernet-ip/packets/listidentity"
+	"gitee.com/ziIoT/ethernet-ip/packets/listinterfaces"
+	"gitee.com/ziIoT/ethernet-ip/packets/listservices"
+	"gitee.com/ziIoT/ethernet-ip/packets/registersession"
+	"gitee.com/ziIoT/ethernet-ip/packets/sendrrdata"
+	"gitee.com/ziIoT/ethernet-ip/packets/sendunitdata"
+	"gitee.com/ziIoT/ethernet-ip/packets/unregistersession"
+	"gitee.com/ziIoT/ethernet-ip/types"
+	"gitee.com/ziIoT/ethernet-ip/utils"
 )
 
 type EIPConn struct {

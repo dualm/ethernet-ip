@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"github.com/dualm/ethernet-ip/types"
+	"gitee.com/ziIoT/ethernet-ip/types"
 )
 
 func Len(raw []byte) types.USINT {

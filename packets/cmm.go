@@ -1,8 +1,8 @@
 package packets
 
 import (
-	"github.com/dualm/common"
-	"github.com/dualm/ethernet-ip/types"
+	"gitee.com/ziIoT/common"
+	"gitee.com/ziIoT/ethernet-ip/types"
 )
 
 func NewConnectedMessage(connectionID types.UDINT, sequenceNumber types.UINT, messageRouterRequest *MessageRouterRequest) (*CommandPacketFormat, error) {

@@ -1,9 +1,9 @@
 package nop
 
 import (
-	"github.com/dualm/ethernet-ip/packets"
-	"github.com/dualm/ethernet-ip/packets/command"
-	"github.com/dualm/ethernet-ip/types"
+	"gitee.com/ziIoT/ethernet-ip/packets"
+	"gitee.com/ziIoT/ethernet-ip/packets/command"
+	"gitee.com/ziIoT/ethernet-ip/types"
 )
 
 func New(data []byte) (*packets.EncapsulationMessagePackets, error) {

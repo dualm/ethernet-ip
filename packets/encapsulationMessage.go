@@ -3,9 +3,9 @@ package packets
 import (
 	"errors"
 
-	"github.com/dualm/common"
-	"github.com/dualm/ethernet-ip/packets/command"
-	"github.com/dualm/ethernet-ip/types"
+	"gitee.com/ziIoT/common"
+	"gitee.com/ziIoT/ethernet-ip/packets/command"
+	"gitee.com/ziIoT/ethernet-ip/types"
 )
 
 type EncapsulationHeader struct {

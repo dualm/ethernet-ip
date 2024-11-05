@@ -1,10 +1,10 @@
 package listservices
 
 import (
-	"github.com/dualm/common"
-	"github.com/dualm/ethernet-ip/packets"
-	"github.com/dualm/ethernet-ip/packets/command"
-	"github.com/dualm/ethernet-ip/types"
+	"gitee.com/ziIoT/common"
+	"gitee.com/ziIoT/ethernet-ip/packets"
+	"gitee.com/ziIoT/ethernet-ip/packets/command"
+	"gitee.com/ziIoT/ethernet-ip/types"
 )
 
 func New(context types.ULINT) (*packets.EncapsulationMessagePackets, error) {
